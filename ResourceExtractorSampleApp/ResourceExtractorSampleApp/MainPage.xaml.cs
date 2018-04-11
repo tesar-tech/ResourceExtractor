@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -25,6 +26,8 @@ namespace ResourceExtractorSampleApp
         public MainPage()
         {
             this.InitializeComponent();
+
+            TextBoxFilledInCodeBehind.Text = ResourceLoader.GetForCurrentView().GetString("TextFromCSharpCode");//This default text is placed in comment in MainPage.xaml.cs
         }
     }
 }

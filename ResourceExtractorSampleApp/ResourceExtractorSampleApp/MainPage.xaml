@@ -8,6 +8,14 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel Orientation="Vertical">
 
+            <TextBlock x:Uid="TextBlockOne" Text="Hello (default text taken from Text property in xaml)"/>
+            <TextBlock x:Uid="TextBlockWithTwoPropsToTranslate2" Text="This is first property" 
+                       ToolTipService.ToolTip="This is second property"/>
+
+            <TextBlock x:Name="TextBoxFilledInCodeBehind"></TextBlock>
+            
+        </StackPanel>
     </Grid>
 </Page>
