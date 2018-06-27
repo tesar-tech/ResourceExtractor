@@ -4,7 +4,8 @@ open System.IO
 let folderToDeepSearchForFiles = __SOURCE_DIRECTORY__  + @"\ResourceExtractorSampleApp\ResourceExtractorSampleApp"
 let finalResourceFilePath =  folderToDeepSearchForFiles + @"\Strings\en-US\Resources.resw"
 
-let ignoredFolders = seq["bin" ;"obj"]//there are also xaml files 
+
+let ignoredFolders = seq["bin" ;"obj";"Properties";"Backup";"MultilingualResources";"Strings";"AppPackages";"Assets";"BundleArtifacts";"Resources"]//there are also xaml files 
 let xmlPrefix = 
  """<?xml version="1.0" encoding="utf-8"?>
 <root>
@@ -41,22 +42,24 @@ let dirsWithoutIgnored =
   Directory.GetDirectories folderToDeepSearchForFiles 
   |> Seq.filter (fun x -> Seq.contains x ignoredFoldersFullPaths|>not   )
   |> Seq.map  Path.GetFullPath 
-  |> Seq.append (Seq.singleton folderToDeepSearchForFiles)
+  //|> Seq.append (Seq.singleton folderToDeepSearchForFiles) //dont want to deepSearch here again (SearchOption.AllDirectories)
 
 let DataElementsFromXaml =
  dirsWithoutIgnored |> Seq.map (fun c -> 
  Directory.GetFiles(c, "*.xaml",SearchOption.AllDirectories) 
+ |> Seq.append  (Directory.GetFiles(folderToDeepSearchForFiles, "*.xaml",SearchOption.TopDirectoryOnly))//include root folder, but files only
  |> Seq.map (Path.GetFullPath >>getDataElementsFromXaml )
  |> String.concat "\n" ) |> String.concat "\n"    
 
 let DataElementsFromCs =
  dirsWithoutIgnored |> Seq.map (fun c -> 
  Directory.GetFiles(c, "*.cs",SearchOption.AllDirectories) 
+ |> Seq.append  (Directory.GetFiles(folderToDeepSearchForFiles, "*.cs",SearchOption.TopDirectoryOnly))//include root folder, but files only
  |> Seq.map (Path.GetFullPath >>getDataElementsFromCs )
  |> String.concat "\n" ) |> String.concat "\n"   
 
 
-let allDataElements =  DataElementsFromCs + DataElementsFromXaml
+let allDataElements =  (DataElementsFromCs + DataElementsFromXaml).Replace("\n\n","")//remove unnecessary empty rows
 
 // This will rewrite existing Resources.resw file
 File.WriteAllText(finalResourceFilePath,xmlPrefix+allDataElements+xmlPostfix);
