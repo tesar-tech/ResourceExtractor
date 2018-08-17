@@ -46,17 +46,20 @@ let dirsWithoutIgnored =
 
 let DataElementsFromXaml =
  dirsWithoutIgnored |> Seq.map (fun c -> 
- Directory.GetFiles(c, "*.xaml",SearchOption.AllDirectories) 
+ Directory.GetFiles(c, "*.xaml",SearchOption.AllDirectories) )//seq<string[]>
+ |> Seq.collect (id) //seq<string>
  |> Seq.append  (Directory.GetFiles(folderToDeepSearchForFiles, "*.xaml",SearchOption.TopDirectoryOnly))//include root folder, but files only
  |> Seq.map (Path.GetFullPath >>getDataElementsFromXaml )
- |> String.concat "\n" ) |> String.concat "\n"    
+ |> String.concat "\n"    
 
 let DataElementsFromCs =
  dirsWithoutIgnored |> Seq.map (fun c -> 
- Directory.GetFiles(c, "*.cs",SearchOption.AllDirectories) 
+ Directory.GetFiles(c, "*.cs",SearchOption.AllDirectories) )//seq<string[]>
+ |> Seq.collect (id) //seq<string>
  |> Seq.append  (Directory.GetFiles(folderToDeepSearchForFiles, "*.cs",SearchOption.TopDirectoryOnly))//include root folder, but files only
  |> Seq.map (Path.GetFullPath >>getDataElementsFromCs )
- |> String.concat "\n" ) |> String.concat "\n"   
+ |> String.concat "\n"    
+
 
 
 let allDataElements =  (DataElementsFromCs + DataElementsFromXaml).Replace("\n\n","")//remove unnecessary empty rows
