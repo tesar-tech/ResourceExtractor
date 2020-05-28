@@ -1,3 +1,4 @@
+//https://github.com/tesar-tech/ResourceExtractor
 open System.Text.RegularExpressions
 open System.IO
 
@@ -66,3 +67,5 @@ let allDataElements =  (DataElementsFromCs + DataElementsFromXaml).Replace("\n\n
 
 // This will rewrite existing Resources.resw file
 File.WriteAllText(finalResourceFilePath,xmlPrefix+allDataElements+xmlPostfix);
+
+//https://github.com/tesar-tech/ResourceExtractor
