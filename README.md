@@ -1,6 +1,6 @@
 # Resource Extractor
 
-Extracting resources one by one is nasty. This script makes it easy:
+Keep your strings of primary language in xaml. Extract them by running this script.
 
 ![](media/2018-04-10-17-36-48.png)
 
@@ -24,6 +24,16 @@ Extracting resources one by one is nasty. This script makes it easy:
     ResourceLoader.GetForCurrentView().GetString("TextFromCSharpCode");//This default text is placed in comment in MainPage.xaml.cs`
     ```
 3. Run F# script. Note that existing `en-US\Resource.resw` file will be overwritten.For complete example, see sample UWP app.
+
+## The flow with Multilingual app toolkit
+
+Start with instalation of [Multilingual app toolkit extension](https://marketplace.visualstudio.com/items?itemName=MultilingualAppToolkit.MultilingualAppToolkit-18308) and [Multilingual app toolkit Editor](https://developer.microsoft.com/en-us/windows/downloads/multilingual-app-toolkit/)
+
+1. Write your xaml with `x:Uid` (follow instructions above)
+2. Run `resourceExtractor.fsx` script. This will generate `en-US\Resource.resw`.
+3. Build your app. This will generate `xlf` files under `MultilingualResources` folder.
+4. Use Multilingual app toolkit Editor to translate your strings.
+5. Build app again. It will generate translated `Resource.resw` files.
 
 ## Limitations
 
