@@ -35,6 +35,23 @@ Start with instalation of [Multilingual app toolkit extension](https://marketpla
 4. Use Multilingual app toolkit Editor to translate your strings.
 5. Build app again. It will generate translated `Resource.resw` files.
 
+## Custom Accelerators
+
+It also works with [custom accelerators](https://github.com/tesar-tech/CustomAccelerators) definitions:
+
+```csharp
+  var acceleratorsList = new List<(string identity, string label, VirtualKey key, VirtualKeyModifiers modifiers)>()
+    {
+     //ResourceExtractorAcceleratorsStart
+     ("OpenFile","Open File",VirtualKey.O,VirtualKeyModifiers.Control),
+     ("HelpAndFeedback","Help And Feedback",VirtualKey.F1,VirtualKeyModifiers.None),
+     ("Settings","Settings",VirtualKey.S,VirtualKeyModifiers.Shift),
+     //ResourceExtractorAcceleratorsEnd
+    };
+```
+
+The comments (`//ResourceExtractorAcceleratorsStart` and `//ResourceExtractorAcceleratorsEnd`) are the key here -> script will look for these comments and extract strings inside them.
+
 ## Limitations
 
 - There are only two possible outputs:

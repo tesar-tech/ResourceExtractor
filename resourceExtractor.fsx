@@ -45,6 +45,17 @@ let dirsWithoutIgnored =
   |> Seq.map  Path.GetFullPath 
   //|> Seq.append (Seq.singleton folderToDeepSearchForFiles) //dont want to deepSearch here again (SearchOption.AllDirectories)
 
+let getDataElementsFromCs2 filePath =  //first match is from getstring, second is from Accelerators
+  let fromGetString = Seq.cast<Match>( Regex.Matches(File.ReadAllText(filePath), """ResourceLoader.GetForCurrentView\(\).GetString\("(.*)"\);\/\/(.*)"""))
+  let m = Regex.Match(File.ReadAllText(filePath),"""\/\/ResourceExtractorAcceleratorsStart\s+([\s\S]*)\s+\/\/ResourceExtractorAcceleratorsEnd""")
+  match m.Success with
+    |false -> Seq.empty
+    |true -> Regex.Matches(m.Value  , """\s*\(\s*"(.+?)"\s*,\s*"(.+?)".*""" ) 
+          |> Seq.cast<Match> 
+  |> Seq.append fromGetString 
+  |> Seq.map (fun x->"\t<data name=\""+(x.Groups.[1]).Value + "\" xml:space=\"preserve\">\n\t\t<value>" + (x.Groups.[2]).Value+ "</value>\n\t</data>\n") |> Seq.fold (+) ""
+
+
 let DataElementsFromXaml =
  dirsWithoutIgnored |> Seq.map (fun c -> 
  Directory.GetFiles(c, "*.xaml",SearchOption.AllDirectories) )//seq<string[]>
@@ -53,15 +64,14 @@ let DataElementsFromXaml =
  |> Seq.map (Path.GetFullPath >>getDataElementsFromXaml )
  |> String.concat "\n"    
 
+
 let DataElementsFromCs =
  dirsWithoutIgnored |> Seq.map (fun c -> 
  Directory.GetFiles(c, "*.cs",SearchOption.AllDirectories) )//seq<string[]>
  |> Seq.collect (id) //seq<string>
  |> Seq.append  (Directory.GetFiles(folderToDeepSearchForFiles, "*.cs",SearchOption.TopDirectoryOnly))//include root folder, but files only
- |> Seq.map (Path.GetFullPath >>getDataElementsFromCs )
+ |> Seq.map (Path.GetFullPath >>getDataElementsFromCs2 )
  |> String.concat "\n"    
-
-
 
 let allDataElements =  (DataElementsFromCs + DataElementsFromXaml).Replace("\n\n","")//remove unnecessary empty rows
 
