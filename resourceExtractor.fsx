@@ -32,10 +32,10 @@ let getDataElementsFromXaml filePath =
                             |_ -> seq[ (string( x.Groups.Item 1)+"."+string( x.Groups.[3].Captures.[0]),string( x.Groups.[4].Captures.[0]) )])
   |> Seq.map (fun (name ,value) ->"\t<data name=\""+name+ "\" xml:space=\"preserve\">\n\t\t<value>" + value+ "</value>\n\t</data>\n") |> Seq.fold (+) ""
 
-let getDataElementsFromCs filePath =  
-    Regex.Matches(File.ReadAllText(filePath), """ResourceLoader.GetForCurrentView\(\).GetString\("(.*)"\);\/\/(.*)""")
- |> Seq.cast<Match> 
- |> Seq.map (fun x->"\t<data name=\""+(x.Groups.[1]).Value + "\" xml:space=\"preserve\">\n\t\t<value>" + (x.Groups.[2]).Value+ "</value>\n\t</data>\n") |> Seq.fold (+) ""
+// let getDataElementsFromCs filePath =  
+//     Regex.Matches(File.ReadAllText(filePath), """ResourceLoader.GetForCurrentView\(\).GetString\("(.*)"\);\/\/(.*)""")
+//  |> Seq.cast<Match> 
+//  |> Seq.map (fun x->"\t<data name=\""+(x.Groups.[1]).Value + "\" xml:space=\"preserve\">\n\t\t<value>" + (x.Groups.[2]).Value+ "</value>\n\t</data>\n") |> Seq.fold (+) ""
 
 let ignoredFoldersFullPaths = ignoredFolders|> Seq.map (fun x ->folderToDeepSearchForFiles+"\\"+x )
 
@@ -53,7 +53,7 @@ let getDataElementsFromCs2 filePath =  //first match is from getstring, second i
     |true -> Regex.Matches(m.Value  , """\s*\(\s*"(.+?)"\s*,\s*"(.+?)".*""" ) 
           |> Seq.cast<Match> 
   |> Seq.append fromGetString 
-  |> Seq.map (fun x->"\t<data name=\""+(x.Groups.[1]).Value + "\" xml:space=\"preserve\">\n\t\t<value>" + (x.Groups.[2]).Value+ "</value>\n\t</data>\n") |> Seq.fold (+) ""
+  |> Seq.map (fun x->"\t<data name=\""+(x.Groups.[1]).Value + "\" xml:space=\"preserve\">\n\t\t<value>" + (x.Groups.[2]).Value.Trim()+ "</value>\n\t</data>\n") |> Seq.fold (+) ""
 
 
 let DataElementsFromXaml =
